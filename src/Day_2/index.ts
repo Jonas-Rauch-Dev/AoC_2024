@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
 
 
-export function isSafe(report: number[]): boolean {
+export function isSafe(report: number[], dampener: boolean): boolean {
 
     if (report.length <= 1) {
         return false;
@@ -14,12 +14,13 @@ export function isSafe(report: number[]): boolean {
         const absDiff = Math.abs(diff);
         const diffSign = Math.sign(diff);
 
-        if (absDiff === 0 || absDiff > 3) {
-            return false;
-        }
+        const unsafe = (absDiff === 0 || absDiff > 3) || (previousDiffSign && previousDiffSign !== diffSign);
 
-        if (previousDiffSign && previousDiffSign !== diffSign) {
-            return false;
+        if (unsafe) {
+            return dampener
+                && (isSafe(report.slice(1), false)
+                || isSafe(report.slice(0, i).concat(report.slice(i+1)), false)
+                || isSafe(report.slice(0, i-1).concat(report.slice(i)), false))
         }
 
         previousDiffSign = diffSign;
@@ -28,9 +29,9 @@ export function isSafe(report: number[]): boolean {
     return true;
 }
 
-export function safeReports(reports: number[][]): number {
+export function safeReports(reports: number[][], dampener: boolean): number {
     return reports.reduce((safeCount, report) => {
-        return isSafe(report) ? safeCount + 1 : safeCount;
+        return isSafe(report, dampener) ? safeCount + 1 : safeCount;
     }, 0);
 }
 
@@ -44,15 +45,20 @@ async function parseInputToReports(): Promise<number[][]> {
 
 }
 
-async function day2Part1(): Promise<number> {
+async function day2(): Promise<{part1: number, part2: number}> {
     const reports = await parseInputToReports();
-    return safeReports(reports);
+    const part1 = safeReports(reports, false);
+    const part2 = safeReports(reports, true);
+    return {part1, part2};
 }
 
 if (require.main === module) {
-    day2Part1().catch(error => {
+    day2().catch(error => {
         console.error(`Day 2 execution failed with error: ${error}`);
     }).then(value => {
-        console.log(`Solution to day 2 part 1: ${value}`);
+        if (value) {
+            console.log(`Solution to day 2 part 1: ${value.part1}`);
+            console.log(`Solution to day 2 part 2: ${value.part2}`);
+        }
     });
 }
