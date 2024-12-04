@@ -29,5 +29,5 @@ export function mul(memory: string): number {
     }
 }
 
-console.log(`Solution to puzzle input: ${mul(puzzleInput)}`);
+console.log(`Solution to day 3 puzzle: ${mul(puzzleInput)}`);
 
