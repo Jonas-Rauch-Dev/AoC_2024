@@ -1,5 +1,5 @@
-import { sum } from "."
+import { mul } from "."
 
-test('Sums two numbers', () => {
-    expect(sum(1, 2)).toBe(3)
+test('Should work for sample test case', () => {
+    expect(mul("xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))")).toBe(161)
 });
