@@ -24,8 +24,27 @@ export function mul(memory: string): number {
 
 // Part 2
 export function doMul(memory: string): number {
+    const regex = /(mul\([0-9]{1,3},[0-9]{1,3}\))|(do\(\))|(don't\(\))/g;
+    const matches = memory.match(regex);
 
-    return 0;
+    if(!matches) {
+        return 0;
+    }
+
+    return matches.reduce(({active, sum}, cmd: string) => {
+        if (cmd === "don't()") {
+            active = false;
+        } else if (cmd === "do()") {
+            active = true;
+        } else if (active) {
+            const numbers = cmd.match(/([0-9]+)/g);
+            if (numbers) {
+                sum += Number(numbers[0]) * Number(numbers[1]);
+            }
+        }
+
+        return {active, sum}
+    }, {active: true, sum: 0}).sum
 }
 
 async function readInput(): Promise<string> {
