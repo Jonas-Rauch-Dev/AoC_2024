@@ -119,7 +119,7 @@ async function day1(): Promise<{part1: number, part2: number}> {
 
 if (require.main === module) {
     day1().catch(err => {
-        console.error(`Day 2 execution failed with error: ${err}`);
+        console.error(`Day 1 execution failed with error: ${err}`);
     }).then((value) => {
             if (value) {
                 console.log(`Solution to day 1 part 1: ${value.part1}`);
